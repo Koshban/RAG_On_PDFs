@@ -1,4 +1,5 @@
 .env
 llmenv/
 diagrams/
+emb/
 

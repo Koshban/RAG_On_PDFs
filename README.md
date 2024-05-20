@@ -8,6 +8,12 @@ This project demonstrates how to build a simple chatbot using LangChain that can
 - Use LangChain's OpenAI integration to process and respond to queries.
 - Simple command-line interface for specifying the input file.
 
+# NOTE
+
+The AI and Langchain landscape is changing so fats, that even within 1 month of coding this, some of the APIs might change/get deprecated.
+If you do get errors for such or deprecated warnings , please follow langchain documentation on whats the latest iteration of those Classes and Functions.
+https://api.python.langchain.com/en/latest/langchain_api_reference.html
+
 ## Prerequisites
 
 - Python 3.11+
@@ -38,7 +44,7 @@ This project demonstrates how to build a simple chatbot using LangChain that can
     pipenv install
     pipienv shell
     ```
-
+    Note : You might need to install MicroSoft C++ Build tools + Visual Studio Community ( with Python installations ) + Windows 10/11 SDK to get CHromaDB to install using pip.
 4. **Set up environment variables:**
 
     Create a `.env` file in the root directory of your project and add your OpenAI API key:

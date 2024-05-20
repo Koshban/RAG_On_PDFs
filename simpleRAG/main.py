@@ -5,6 +5,7 @@ from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
+from langchain.vectorstores.chroma import Chroma
 #from langchain.chains import LLMChain, SequentialChain
 import argparse
 import os
@@ -18,8 +19,21 @@ def setup_env(file: str):
     loader = TextLoader(f'{BASE_DIR}\\{file}')
     llm = ChatOpenAI()
     docs = loader.load_and_split(text_splitter=text_splitter)
-    # for d in docs:
-    #     print(d.page_content, "\n")
+    # Embedding DB/Vector Store Chroma
+    db = Chroma.from_documents(
+        docs, embedding=embeddings, persist_directory="emb"
+    )
+    return db
+
+def doing_search(db):
+    print(f"DB is {db}")
+    user_query = input("What is your Query ? : ")
+    print(f"Query is : {user_query}")
+    #results = db.similarity_search_with_score("{user_query}", k=2)
+    results = db.similarity_search(f"{user_query}", k=4) # No score, only contents
+    for result in results:
+        #print("\n", result[1]) # Search Score
+        print("\n", result[0].page_content) # Actual content
 
 
 def get_args() -> str:
@@ -28,11 +42,9 @@ def get_args() -> str:
     myargs = parser.parse_args()
     return myargs.file
 
-
-
-
 if __name__ == "__main__":
     filename = get_args()
     print(f"Filename is : {filename}")
-    setup_env(file=filename)
+    db = setup_env(file=filename)
+    doing_search(db=db)
 
