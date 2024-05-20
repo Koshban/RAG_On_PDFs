@@ -8,7 +8,7 @@ This project demonstrates how to build a simple chatbot using LangChain that can
 - Use LangChain's OpenAI integration to process and respond to queries.
 - Simple command-line interface for specifying the input file.
 
-# NOTE
+## NOTE
 
 The AI and Langchain landscape is changing so fats, that even within 1 month of coding this, some of the APIs might change/get deprecated.
 If you do get errors for such or deprecated warnings , please follow langchain documentation on whats the latest iteration of those Classes and Functions.
@@ -25,8 +25,8 @@ https://api.python.langchain.com/en/latest/langchain_api_reference.html
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/yourusername/langchain-chatbot.git
-    cd langchain-chatbot
+    git clone https://github.com/Koshban/RAG_On_PDFs.git
+    cd RAG_On_PDFs
     ```
 
 2. **Create and activate a virtual environment (optional but recommended):**
@@ -83,6 +83,9 @@ https://api.python.langchain.com/en/latest/langchain_api_reference.html
 An example `Facts.txt` might look like:
 
 ```plaintext
-Fact 1: The Eiffel Tower is located in Paris, France.
-Fact 2: The Great Wall of China is over 13,000 miles long.
-Fact 3: The human body has 206 bones.
+1. The Eiffel Tower is located in Paris, France.
+2. The Great Wall of China is over 13,000 miles long.
+3. The human body has 206 bones.
+4. "Dreamt" is the only English word that ends with the letters "mt."
+5. An ostrich's eye is bigger than its brain.
+6. Honey is the only natural food that is made without destroying any kind of life.
