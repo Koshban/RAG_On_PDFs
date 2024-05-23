@@ -1,16 +1,21 @@
 """ Based on using Vector DB and RAG to extract relevant data from the Facts.txt file and asnwer quesries based on that data"""
 from dotenv import load_dotenv, find_dotenv
+import langchain
 from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA    
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
+from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.question_answering import load_qa_chain
 from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
+from langchain_core.vectorstores import VectorStoreRetriever
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from redundant_filter_retriever import RedundantFilterRetriever
 import argparse
 import os
 import logging
+#langchain.debug = True
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -26,7 +31,8 @@ def setup_env(file: str):
     docs = loader.load_and_split(text_splitter=text_splitter)
     # Embedding DB/Vector Store Chroma. Just creating an instance, We are NOT Loading any docs here 
     # Check if the vector store already exists
-    if os.path.exists(os.path.join(persist_directory, "index")):
+#    if os.path.exists(os.path.join(persist_directory, "index")):
+    if os.path.exists(f'{BASE_DIR}\\{persist_directory}'):
         # Load the existing vector store
         logger.info("Loading existing vector store")
         db = Chroma(
@@ -39,26 +45,30 @@ def setup_env(file: str):
         docs, embedding=embeddings, persist_directory=persist_directory
         )
 
-    chat = ChatOpenAI(verbose=True)
-    retriever = db.as_retriever()
-    qa_chain= load_qa_chain(llm=chat, chain_type="stuff")
+    chat = ChatOpenAI(verbose=True, model=os.getenv("OPENAI_MODEL", "gpt-4"))
+    # Set up the retriever
+    #retriever = VectorStoreRetriever(vectorstore=db, top_k=5)
+    retreiver = RedundantFilterRetriever(embeddings=embeddings, chroma=db)
+    #retriever = db.as_retriever()
+    qa_chain= load_qa_chain(llm=chat, 
+                            #chain_type="stuff"
+                            #chain_type="map_reduce"
+                            chain_type="map_rerank")
     chain = RetrievalQA(
         retriever=retriever,
-        combine_documents_chain=qa_chain
-        
-    )
+        combine_documents_chain=qa_chain )
+    logger.info(f"Chain is : {chain}")
+    logger.info(f"OpenAI Model being used is : {chat.model_name}")
     return chain
 
 def doing_search(chain):
-    user_query = input("What is your Query ? : ")
-    logger.info(f"Received query: {user_query}")
-    result = chain.invoke(user_query)
-    # for x in chain:
-    #     logger.info(f"System Messages and Human Messages: {x}")
-    #     logger.info(f"Type: {type(x)}")
-    # logger.info(f"Result: {result}")
-    # #for result in results:
-    # print("\n", result["result"]) # Actual content
+    try:
+        user_query = input("What is your Query ? : ")
+        logger.info(f"Received query: {user_query}")
+        result = chain.invoke(user_query)
+    except KeyboardInterrupt:
+        print("\n **** Exiting Now, Bbye!! *******")
+        exit()
     return result
 
 def log_chain_messages(chain):

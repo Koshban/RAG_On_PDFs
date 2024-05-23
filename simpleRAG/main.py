@@ -14,7 +14,7 @@ def setup_env(file: str):
     load_dotenv(find_dotenv())
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     embeddings = OpenAIEmbeddings()
-    emb = embeddings.embed_query("My name is Kaushik")
+    emb = embeddings.embed_query("My name is Kaushik") # How to query embeddings manually
     text_splitter = CharacterTextSplitter(separator="\n", chunk_size=200, chunk_overlap=0)
     loader = TextLoader(f'{BASE_DIR}\\{file}')
     llm = ChatOpenAI()
@@ -32,8 +32,7 @@ def doing_search(db):
     #results = db.similarity_search_with_score("{user_query}", k=2)
     results = db.similarity_search(f"{user_query}", k=4) # No score, only contents
     for result in results:
-        #print("\n", result[1]) # Search Score
-        print("\n", result[0].page_content) # Actual content
+        print("\n", result.page_content) # Actual content
 
 
 def get_args() -> str:
