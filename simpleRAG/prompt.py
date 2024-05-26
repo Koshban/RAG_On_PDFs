@@ -1,13 +1,12 @@
 """ Based on using Vector DB and RAG to extract relevant data from the Facts.txt file and asnwer quesries based on that data"""
 from dotenv import load_dotenv, find_dotenv
 import langchain
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains import RetrievalQA    
-from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores import Chroma
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.question_answering import load_qa_chain
 from langchain_community.document_loaders import TextLoader
+from langchain_community.vectorstores import Chroma
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_core.vectorstores import VectorStoreRetriever
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
