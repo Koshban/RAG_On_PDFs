@@ -2,14 +2,18 @@
 from dotenv import load_dotenv, find_dotenv
 import langchain
 from langchain_openai import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, MessagesPlaceholder
+from langchain.prompts import (ChatPromptTemplate, HumanMessagePromptTemplate, 
+                               MessagesPlaceholder)
 from langchain.agents import OpenAIFunctionsAgent, AgentExecutor, initialize_agent, AgentType, create_openai_functions_agent
 from langchain.schema import SystemMessage
+from langchain.memory import ConversationBufferMemory
 from tools.sql import run_query_tool, list_tables, describe_tables_tool
+from tools.report import write_report_tool
+from handlers.chat_model_start_handler import ChatModelStartHandler
 import argparse
 import os
 import logging
-langchain.debug = True
+#langchain.debug = True
 
 def get_args():
     parser = argparse.ArgumentParser(description="Provide the query you want answered by the ChatBot")
@@ -27,7 +31,9 @@ def setup_env():
     
 
 def get_agent_running():
-    chat = ChatOpenAI(verbose=True, model=os.getenv("OPENAI_MODEL", "gpt-4"))
+    handler=ChatModelStartHandler()
+    chat = ChatOpenAI(#verbose=True, 
+                      model=os.getenv("OPENAI_MODEL", "gpt-4"), callbacks=[handler, handler, handler])
     tables = list_tables()
     #print(f"Tables are : {tables}")
     prompt = ChatPromptTemplate(
@@ -39,12 +45,15 @@ def get_agent_running():
         "Instead, use the 'describe_tables_tool' function."
             )
         ),
+        MessagesPlaceholder(variable_name="chat_history"),
         HumanMessagePromptTemplate.from_template("{input}"),
         MessagesPlaceholder(variable_name="agent_scratchpad")
         ]
     )
 
-    tools = [run_query_tool, describe_tables_tool]
+    tools = [run_query_tool, 
+             describe_tables_tool, 
+             write_report_tool]
 
     # agent = OpenAIFunctionsAgent(
     #     llm=chat,
@@ -56,13 +65,14 @@ def get_agent_running():
     #     verbose=True,
     #     tools=tools
     # )
-
+    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
     agent_executor = initialize_agent( # replacing the above manual initialization and executor with a single function
         llm=chat,
-        verbose=True,
+        #verbose=True,
         tools=tools,
         agent=AgentType.OPENAI_FUNCTIONS,
-        prompt=prompt
+        prompt=prompt,
+        memory=memory
     )
 
     return agent_executor
