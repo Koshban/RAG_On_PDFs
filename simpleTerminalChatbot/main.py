@@ -4,11 +4,11 @@ from langchain.prompts import HumanMessagePromptTemplate, ChatPromptTemplate, Me
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory, FileChatMessageHistory, ConversationSummaryMemory, ConversationSummaryBufferMemory
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 import os
 
 # Setting Up environment
-load_dotenv()
+load_dotenv(find_dotenv())
 BASE_DIR=os.path.dirname(os.path.abspath(__file__))
 print(BASE_DIR)
 

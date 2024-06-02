@@ -2,4 +2,8 @@
 llmenv/
 diagrams/
 emb/
+__pycache__
+.venv
+instance
+.DS_Store
 

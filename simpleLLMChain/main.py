@@ -1,11 +1,11 @@
 """ Based on Simple Completion template"""
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain, SequentialChain
 import argparse
 
-load_dotenv() # Load environment variables from .env file.
+load_dotenv(find_dotenv()) # Load environment variables from .env file.
 
 
 def callOpenAI(language: str, task: str) -> tuple:
