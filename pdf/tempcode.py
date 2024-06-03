@@ -31,3 +31,17 @@ def load_all_confluence_pages(loader: ConfluenceLoader, space_key: str, max_page
         start_page += max_pages_per_request
 
     return all_docs
+
+def _load(metadata):
+    loader = ConfluenceLoader(
+        url='myurl', 
+        token=os.getenv('CONF_TOKEN'), 
+        cloud=False, 
+        space_key=os.getenv('KEY')
+    )
+
+    docs = load_all_confluence_pages(loader, space_key=os.getenv('KEY'))
+
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200, add_start_index=True)
+    splitters = text_splitter.split_documents(docs)
+    return splitters
