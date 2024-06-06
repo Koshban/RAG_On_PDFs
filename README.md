@@ -49,22 +49,6 @@ https://api.python.langchain.com/en/latest/langchain_api_reference.html
 
     Create a `.env` file in the root directory of your project and add your API keys. I have added a .env_copy file to make it easier. Rename it as .env and fill in the details.
 
-    ```plaintext
-    OPENAI_API_KEY=your_openai_api_key
-    LANGCHAIN_TRACING_V2=true
-    LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
-    LANGCHAIN_API_KEY=your_langchain_api_key
-    OPENAI_MODEL=gpt-4o
-    SECRET_KEY=123
-    SQLALCHEMY_DATABASE_URI=sqlite:///sqlite.db
-    UPLOAD_URL=https://prod-upload-langchain.fly.dev
-    REDIS_URI=
-    PINECONE_API_KEY=
-    PINECONE_ENV_NAME=
-    PINECONE_INDEX_NAME=
-    LANGFUSE_PUBLIC_KEY=
-    LANGFUSE_SECRET_KEY=
-    ```
 
 ## Usage
 

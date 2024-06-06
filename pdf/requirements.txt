@@ -6,6 +6,8 @@ Flask
 flask_sqlalchemy
 flask_cors
 langchain
+langchain-community
+langchain-openai
 openai
 python-dotenv
 Werkzeug

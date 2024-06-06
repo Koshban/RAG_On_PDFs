@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_cors import CORS
-
 from app.web.db import db, init_db_command
 from app.web.db import models
 from app.web.config import Config
@@ -12,30 +11,6 @@ from app.web.views import (
     client_views,
     conversation_views,
 )
-from celery import Celery
-from celery import Celery, Task
-import os
-
-def celery_init_app(app: Flask) -> Celery:
-    class FlaskTask(Task):
-        def __call__(self, *args: object, **kwargs: object) -> object:
-            with app.app_context():
-                return self.run(*args, **kwargs)
-
-    celery_app = None
-    if os.name == "posix":
-        celery_app = Celery(app.name, task_cls=FlaskTask)
-        celery_app.config_from_object(app.config["CELERY"])
-        celery_app.set_default()
-    else:
-        celery_app = Celery(app.name)
-        celery_app.config_from_object(app.config["CELERY"])
-        celery_app.set_default()
-        celery_app.Task = FlaskTask
-
-    app.extensions["celery"] = celery_app
-
-    return celery_app
 
 def create_app():
     app = Flask(__name__, static_folder="../../client/build")
@@ -46,10 +21,12 @@ def create_app():
     register_hooks(app)
     register_blueprints(app)
     from app.celery import celery_init_app
-    #if Config.CELERY["broker_url"]:
-    celery_app = celery_init_app(app)
+    print(f"Config is {Config.CELERY}")
+    if Config.CELERY["broker_url"]:
+        print(f"BROKEN URL")
+        celery_app = celery_init_app(app)
 
-    return app, celery_app
+    return app
 
 
 def register_extensions(app):

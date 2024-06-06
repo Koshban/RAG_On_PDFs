@@ -170,3 +170,10 @@ Then:
 flask --app app.web init-db
 ```
 
+## Various .env variables and Values
+
+Pinecone  : Login ( register if first time user ) to pinecone.ai and Create Index and API Keys there. Note down Index Name, Region and the API Keys.
+LangChain : Login ( register if first time user ) to langchain.com and Create API Keys there. Note down the API Keys.
+OpenAI    : Login ( register if first time user ) to openai.com and Create API Keys there. Note down the API Keys.
+Redis     : Login ( register if first time user ) to pinecone.ai and Create Index and API Keys there. Note down Index Name, Region and the API Keys.
+Langfuse  : Login ( register if first time user ) to pinecone.ai and Create Index and API Keys there. Note down Index Name, Region and the API Keys.

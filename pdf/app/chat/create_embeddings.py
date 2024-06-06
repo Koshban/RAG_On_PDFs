@@ -17,21 +17,29 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
 from logger import get_logger
+from app.chat.vector_stores.pinecone import vector_store
 
 # Get the logger for the current module
 logger = get_logger(__name__)
 
 def create_embeddings_for_pdf(pdf_id: str, pdf_path: str):
-    # text_splitter = RecursiveCharacterTextSplitter(
-    #     chunk_size=500,
-    #     chunk_overlap=100
-    # )
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=500,
+        chunk_overlap=100
+    )
 
-    # loader=PyPDFLoader(pdf_path)
+    loader=PyPDFLoader(pdf_path)
 
-    # docs = loader.load_and_split(text_splitter=text_splitter)
-    # logger.debug(f'Docs are {docs}')
-    pass
+    docs = loader.load_and_split(text_splitter=text_splitter)
+    for doc in docs:
+        logger.info(f"Doc is {doc}")
+        doc.metadata =  {
+            "page" : doc.metadata["page"],
+            "text" : doc.page_content,
+            "pdf_id" : pdf_id
+        }
+    vector_store.add_documents(docs)
+    
 
 
 
