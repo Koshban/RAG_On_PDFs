@@ -1,47 +1,24 @@
-from typing import List
-from langchain.document_loaders import ConfluenceLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.schema import Document
-import os
+from langchain_openai import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+# from langchain.chains import LLMChain
+from dotenv import load_dotenv, find_dotenv
 
-def load_all_confluence_pages(loader: ConfluenceLoader, space_key: str, max_pages_per_request: int = 100) -> List[Document]:
-    """Loads all Confluence pages from a space recursively.
+load_dotenv(find_dotenv())
 
-    Args:
-        loader (ConfluenceLoader): An initialized ConfluenceLoader instance.
-        space_key (str): The key of the Confluence space.
-        max_pages_per_request (int, optional): The maximum number of pages to 
-                                               request at a time. Defaults to 100.
+chat = ChatOpenAI(streaming=True, verbose=True)
 
-    Returns:
-        List[Document]: A list of all loaded Confluence pages as Document objects.
-    """
-    all_docs = []
-    start_page = 0
-    while True:
-        docs = loader.load(
-            space_key=space_key, 
-            max_pages=max_pages_per_request, 
-            start_page=start_page, 
-            include_attachments=False
-        )
-        if not docs:  # If no more pages are returned, break the loop
-            break
-        all_docs.extend(docs)
-        start_page += max_pages_per_request
+prompt =  ChatPromptTemplate.from_messages([
+    ("human", "{content}")
+])
 
-    return all_docs
+# chain = LLMChain(llm=chat, prompt=prompt)
+chain = prompt | chat
+output = chain.stream(input="Tell me a Joke about Animals")
+print(output)
 
-def _load(metadata):
-    loader = ConfluenceLoader(
-        url='myurl', 
-        token=os.getenv('CONF_TOKEN'), 
-        cloud=False, 
-        space_key=os.getenv('KEY')
-    )
+# messages = prompt.format_messages(content="Tell me a Joke about Animals")
 
-    docs = load_all_confluence_pages(loader, space_key=os.getenv('KEY'))
-
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200, add_start_index=True)
-    splitters = text_splitter.split_documents(docs)
-    return splitters
+# output = chat.stream(messages)
+# print(output)
+for message in chain.stream(input={"content" : "Tell me a Joke about Animals"}): # chat.stream overrides ChatOpenAI(streaming=False) so it will stream irrespective of the above Flag is True or False
+    print(message)

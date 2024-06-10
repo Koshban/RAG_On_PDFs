@@ -14,7 +14,7 @@ print(BASE_DIR)
 
 def  yak_away_as_much_as_you_like():
     chat = ChatOpenAI(verbose=True) # To Create the Initial OpenAI Object and added verbose=True to if you want to debug what's going on inside the wrapper
-    # SetUp The Langchain "memory" first, the placeholder for the conversation history and context. Bit it has size limits and obviously costs more and more.
+    # SetUp The Langchain "memory" first, the placeholder for the conversation history and context. But it has size limits and obviously costs more and more.
     # chatmemory = ConversationBufferMemory(memory_key="convhistory", return_messages=True, chat_memory=FileChatMessageHistory(f"{BASE_DIR}\\chattinghistory.json"))
     # Or you can use a SummaryMemory which summarizes and stores the conversations up-to-that-point for every iteration. That is stored at every point as a SystemMessage
     chatmemory = ConversationSummaryBufferMemory(memory_key="convhistory", return_messages=True, llm=chat, max_token_limit=40)
@@ -41,10 +41,6 @@ def  yak_away_as_much_as_you_like():
             messages =  chatmemory.chat_memory.messages
             summary = chatmemory.moving_summary_buffer
             print(f"Result is : {result["text"]}")
-            # print(f"Messages is : {messages}")
-            # print(f"Summary is : {summary}")
-            # print(f"Chatmemory is now : {chatmemory}")
-
         except KeyboardInterrupt:
             print("\n **** Exiting Now, Bbye!! *******")
             exit()
