@@ -43,11 +43,13 @@ prompt =  ChatPromptTemplate.from_messages([
     ("human", "{content}")
 ])
 
-
-class StreamingChain(LLMChain):
+''' Base Streaming Class that would work for every type of Chains. We can just call it
+with overwrite in different classes e.g. below '''
+class StreamableChain:
     def stream(self, input: dict):
         queue = Queue() # An individual Queue for every session/object
         handler = StreamingHandler(queue=queue)
+
         def task():
             self(input, callbacks=[handler])
     
@@ -63,7 +65,9 @@ class StreamingChain(LLMChain):
                 print("KeyBoard Interrupt Received")
                 exit()
 
-
+''' To overwrite CUtom Class above , extending it top LLMChain as that is what we are using here'''
+class StreamingChain(StreamableChain, LLMChain):
+    pass
 
 chain = StreamingChain(llm=chat, prompt=prompt)
 input = {"content" : "Tell me a Joke about Animals"}
