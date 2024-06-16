@@ -13,6 +13,7 @@ import random
 from app.chat.score import random_component_by_score
 
 
+
 def select_component(component_type, component_map, chat_args):
     ''' Below  code is to use a random retriever from our set/map of retrievers, and thus we need to store the conversation id to ensure one conversation uses one retriever only
     if you dont need to use such functionality, just use the below line a retriever
@@ -55,11 +56,11 @@ def build_chat(chat_args: ChatArgs):
     condense_question_llm = ChatOpenAI(streaming=False) # This version is created to use a sepaarte CHatOpenAI for the condense quesion chain, so as to be bale to leverage the 
     # StreamingHandler only for the Combine Docs Chain and NOT the Condense Question Chain ( which does the summarization during Streaming)
     
-
     return StreamingConversationalRetrievalChain.from_llm(
         llm=llm,
         condense_question_llm=condense_question_llm, # To detach Streaming Handler from Condense Question Chain
         memory=memory,
-        retriever=retriever
+        retriever=retriever,
+        metadata=chat_args.metadata        
     )
 

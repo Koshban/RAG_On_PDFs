@@ -31,9 +31,7 @@ def random_component_by_score(component_type, component_map):
     for name, score in avg_scores.items():
         cumulative += score
         if random_val <= cumulative:
-            return name
-        
-
+            return name 
 
 def score_conversation(conversation_id: str, score: float, llm: str, retriever: str, memory: str) -> None:
     """
@@ -65,26 +63,21 @@ def score_conversation(conversation_id: str, score: float, llm: str, retriever: 
 
 
 def get_scores():
-    """
-    Retrieves and organizes scores from the langfuse client for different component types and names.
-    The scores are categorized and aggregated in a nested dictionary format where the outer key represents
-    the component type and the inner key represents the component name, with each score listed in an array.
+    aggregate = {"llm": {}, "retriever": {}, "memory": {}}
 
-    The function accesses the langfuse client's score endpoint to obtain scores.
-    If the score name cannot be parsed into JSON, it is skipped.
+    for component_type in aggregate.keys():
 
-    :return: A dictionary organized by component type and name, containing arrays of scores.
+        values = client.hgetall(f"{component_type}_score_values")
+        counts = client.hgetall(f"{component_type}_score_counts")
 
-    Example:
+        # Get all the valid component names from the Values Dict
+        names = values.keys()
 
-        {
-            'llm': {
-                'chatopenai-3.5-turbo': [score1, score2],
-                'chatopenai-4': [score3, score4]
-            },
-            'retriever': { 'pinecone_store': [score5, score6] },
-            'memory': { 'persist_memory': [score7, score8] }
-        }
-    """
+        for name in names:
+            score = int(values.get(name, 1))
+            count = int(counts.get(name, 1))
+            avg = score/count
+            aggregate[component_type][name] = [avg]
+    
+    return aggregate
 
-    pass
