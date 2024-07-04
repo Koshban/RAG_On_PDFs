@@ -54,7 +54,7 @@ def setup_env(file: str):
                             #chain_type="map_reduce"
                             chain_type="map_rerank")
     chain = RetrievalQA(
-        retriever=retriever,
+        retreiver=retreiver,
         combine_documents_chain=qa_chain )
     logger.info(f"Chain is : {chain}")
     logger.info(f"OpenAI Model being used is : {chat.model_name}")
